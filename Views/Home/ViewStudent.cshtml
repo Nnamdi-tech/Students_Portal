@@ -1,0 +1,63 @@
+﻿@model DashboardView
+
+@{ 
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Student View";
+    var imagepath = "~/images/" + (Model.student.ImagePath ?? "no_image.png");
+}
+
+    
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="text-center text-uppercase">@Model.student.FirstName</h1>
+                </div>
+
+                <div class="card-body text-center">
+                    <img class="card-img-top img-responsive img-thumbnail" width="200" src="@imagepath" asp-append-version="true" />
+
+                    <h4>Employee ID : @Model.student.ID</h4>
+                    <h4>Email : @Model.student.Email</h4>
+                    <h4>Addmission Type : @Model.student.AddmissionType</h4>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-controller="home" asp-action="dashboard" class="btn btn-primary">Back</a>
+                    <a class="btn btn-primary" asp-controller="home" asp-action="EditStudent" asp-route-id="@Model.student.ID">Edit</a>
+                    <a onclick="deleteStuff(event,@Model.student.ID)" class="btn btn-danger">Delete</a>
+                    <a class="btn btn-warning" asp-controller="Guarantor" asp-action="StudentGuarantor" asp-route-id="@Model.student.ID">View Guarantor(s)</a>
+                </div>
+            </div>
+        </div>
+
+@section scripts{
+<script type="text/javascript">
+    function deleteStuff(e, ID) {
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            type: 'warning',
+            buttons: true,
+            icon: "warning",
+            danger: true,
+        }).then(function (res) {
+            if (res) {
+                $.ajax({
+                    url: "home/deleteStuff/" + id,
+                    method: "DELETE",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success) {
+                            let x = e.target.parentNode;
+                            x.parentNode.innerText = "";
+                            swal(data.message);
+                        }
+                    },
+                    error: function (err) {
+                        swal(err.message);
+                    }
+                });
+            }
+        })
+    }
+</script>
+ }
